@@ -7,9 +7,11 @@ import config from './config/app';
 import router from './routes/index';
 import db from './models/index';
 import errorMiddleware from './errors/middleware';
+import serialize from './resources/index';
 
 const app = new Koa();
 app.db = db;
+app.serialize = serialize;
 
 app.use(errorMiddleware);
 app.use(logger());
