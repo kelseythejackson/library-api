@@ -1,6 +1,7 @@
 import NotFoundError from './not-found';
 import { ValidationError, UniqueConstraintError } from 'sequelize';
 import { underscore, dasherize } from 'inflected';
+import UnauthorizedError from './unauthorized';
 
 export default async (ctx, next) => {
     try {
@@ -17,6 +18,18 @@ export default async (ctx, next) => {
                         detail: `${err.modelName} not found with the id '${err.id}'`
                     }]
                 };
+            case UnauthorizedError:
+              ctx.status = 401;
+              
+              return ctx.body = {
+                errors: [
+                  {
+                    status: 401,
+                    title: 'Unauthorized',
+                    detail: err.message
+                  }
+                ]
+              };
             case UniqueConstraintError:    
             case ValidationError:
               ctx.status = 422;

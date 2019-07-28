@@ -16,6 +16,7 @@
     "dotenv": "^8.0.0",
     "esm": "^3.2.25",
     "inflected": "^2.0.4",
+    "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.1",
