@@ -3,6 +3,7 @@ export default (model) => {
     type: 'authors',
     id: model.id,
     attributes: {
+      username: model.User.username,
       first: model.first,
       last: model.last
     },

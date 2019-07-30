@@ -4,6 +4,8 @@ import currentUser from '../middleware/current-user';
 
 const router = new Router();
 
+const includeUser = {include: ['User']};
+
 router.get('/', async (ctx) => {
   const query = ctx.query['filter[query]']
   let authors;
@@ -22,10 +24,11 @@ router.get('/', async (ctx) => {
           }
         ]
 
-      }
+      },
+      ...includeUser
     });
   } else {
-    authors = await ctx.app.db.Author.findAll();
+    authors = await ctx.app.db.Author.findAll(includeUser);
   }
 
 
@@ -34,14 +37,14 @@ router.get('/', async (ctx) => {
 
 router.get('/:id', async (ctx) => {
   const id = ctx.params.id;
-  const author = await ctx.app.db.Author.findOrFail(id)
+  const author = await ctx.app.db.Author.findOrFail(id, includeUser)
 
   ctx.body = ctx.app.serialize('author', author);
 });
 router.get('/:id/books', async (ctx) => {
   const id = ctx.params.id;
   const author = await ctx.app.db.Author.findOrFail(id);
-  const books = await author.getBooks();
+  const books = await author.getBooks(includeUser);
 
   ctx.body = ctx.app.serialize('book', books);
 });
@@ -50,8 +53,8 @@ router.post('/', currentUser, async (ctx) => {
   const attrs = ctx.getAttributes();
   attrs.UserId = ctx.currentUser.id;
   const author = await ctx.app.db.Author.create(attrs);
+  author.User = ctx.currentUser;
 
-  debugger;
 
   ctx.status = 201;
   ctx.set('Location', `/authors/${author.id}`)
@@ -62,7 +65,7 @@ router.post('/', currentUser, async (ctx) => {
 router.patch('/:id', async (ctx) => {
   const attrs = ctx.getAttributes();
   const id = ctx.params.id;
-  const author = await ctx.app.db.Author.findOrFail(id)
+  const author = await ctx.app.db.Author.findOrFail(id, includeUser)
 
   author.set(attrs)
   await author.save();
