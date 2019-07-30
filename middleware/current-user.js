@@ -15,10 +15,12 @@ export default async (ctx, next) => {
 
     ctx.currentUser = await ctx.app.db.User.findOrFail(result.sub)
 
-    return await next(ctx);
+    
   } catch (error) {
     throw new UnauthorizedError();
   }
+
+  return await next(ctx);
 
 
 }
